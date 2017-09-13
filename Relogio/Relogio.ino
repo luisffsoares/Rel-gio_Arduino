@@ -85,7 +85,6 @@ void loop(){
   int reading0 = digitalRead(b0);
   int reading1 = digitalRead(b1);
 
-  analogRead(A5);
   
   if(reading0 == HIGH){
       j++;
@@ -129,20 +128,7 @@ void loop(){
   }
 
   */
-
-  /*
-  Serial.print("Segundos: ");
-  Serial.print(segundos);
-  Serial.print("   /////  ");
-  Serial.print(h);
-  Serial.print(" : ");
-  Serial.print(m);
-  Serial.print(" : ");
-  Serial.println(s); 
-   */
  
-
-
 }
  
 /// --------------------------
