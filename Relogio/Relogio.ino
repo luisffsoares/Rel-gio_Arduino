@@ -85,7 +85,7 @@ void loop(){
   int reading0 = digitalRead(b0);
   int reading1 = digitalRead(b1);
 
-  analogRead(A3);
+  analogRead(A5);
   
   if(reading0 == HIGH){
       j++;
