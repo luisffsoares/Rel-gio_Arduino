@@ -70,10 +70,6 @@ void setup()
   // attach the service routine here
   Timer1.attachInterrupt( timerIsr ); 
 
-       
-
- //Serial.begin(9600);
-
  pinMode(b0, INPUT);
  pinMode(b1, INPUT);
 
