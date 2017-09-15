@@ -19,7 +19,7 @@ int cont = 0;
 int i = 0, j = 0;
 int dia = 0;
 long int h,m,s;
-long int segundos =  54567;  //Segundo inicial
+long int segundos =  0;  //Segundo inicial
 
 int hora,minuto,n,hd1,hd2,md1,md2;
 
