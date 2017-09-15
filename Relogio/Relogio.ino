@@ -39,14 +39,13 @@ int lastButtonState0 = LOW;   // the previous reading from the input pin
 int lastButtonState1 = LOW;   // the previous reading from the input pin
 
 int contabotao = 0;
+int contabotao0 = 0,contabotao1 = 0;
 
-bool piscaminuto = LOW;
-bool piscahora = LOW;
+bool espera = LOW;
 bool incrementaminuto = LOW;
 bool incrementahora = LOW;
 bool menuincrementa = LOW;
 
-int contabotao0 = 0,contabotao1 = 0;
 
 void setup() 
 {
@@ -213,15 +212,50 @@ void botoes(){
       contabotao0 = 0;
       incrementahora = HIGH;
     }
+
+    if (espera == LOW){
+      if (buttonState0 == LOW & buttonState1 == HIGH){
+        segundos = segundos+60; 
+        espera = HIGH;
+      }
+    }
+
+    if (espera = HIGH){
+      contabotao1 = contabotao1+1;
+    }
+    if (contabotao1 == 100){
+      contabotao1 = 0;
+      espera = LOW;
+    }
+
+  
+
+    
   }
 
   if (incrementahora == HIGH){
-    if(buttonState0 == HIGH){
+    if(buttonState0 == HIGH & buttonState1 == LOW){
      contabotao0 = contabotao0+1;
     }
     if (contabotao0 == 100){
       contabotao0 = 0;
       incrementahora = LOW;
+    }
+
+
+    if (espera == LOW){
+      if (buttonState0 == LOW & buttonState1 == HIGH){
+        segundos = segundos+3600; 
+        espera = HIGH;
+      }
+    }
+
+    if (espera = HIGH){
+      contabotao1 = contabotao1+1;
+    }
+    if (contabotao1 == 100){
+      contabotao1 = 0;
+      espera = LOW;
     }
   }
   
