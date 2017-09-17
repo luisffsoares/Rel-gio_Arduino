@@ -19,7 +19,7 @@ int cont = 0;
 int i = 0, j = 0;
 int dia = 0;
 long int h,m,s;
-long int segundos =  57892;  //Segundo inicial
+long int segundos =  0;  //Segundo inicial
 
 int hora,minuto,n,hd1,hd2,md1,md2;
 
@@ -39,13 +39,8 @@ int lastButtonState0 = LOW;   // the previous reading from the input pin
 int lastButtonState1 = LOW;   // the previous reading from the input pin
 
 int contabotao = 0;
-int contabotao0 = 0,contabotao1 = 0;
 
-bool espera = LOW;
-bool incrementaminuto = LOW;
-bool incrementahora = LOW;
-bool menuincrementa = LOW;
-
+int piscaminuto = LOW;piscahora = HIGH;
 
 void setup() 
 {
@@ -190,95 +185,19 @@ void botoes(){
 
   if (contabotao == 200){
     //segundos = segundos +60;
-    //contabotao = 0;
-    incrementaminuto = HIGH;
-    
-  }
-
-  if (contabotao == 400){
-    //segundos = segundos +60;
     contabotao = 0;
-    incrementaminuto = LOW;
-    incrementahora = LOW;
+    piscaminuto == HIGH;
     
   }
 
-  if (incrementaminuto == HIGH){
-    if(buttonState0 == HIGH & buttonState1 == LOW){
-     contabotao0 = contabotao0+1;
-    }
-    if (contabotao0 == 100){
-      incrementaminuto = LOW;
-      contabotao0 = 0;
-      incrementahora = HIGH;
-    }
-
-    if (espera == LOW){
-      if (buttonState0 == LOW & buttonState1 == HIGH){
-        segundos = segundos+60; 
-        espera = HIGH;
-      }
-    }
-
-    if (espera = HIGH){
-      contabotao1 = contabotao1+1;
-    }
-    if (contabotao1 == 100){
-      contabotao1 = 0;
-      espera = LOW;
-    }
-
-  
-
-    
-  }
-
-  if (incrementahora == HIGH){
-    if(buttonState0 == HIGH & buttonState1 == LOW){
-     contabotao0 = contabotao0+1;
-    }
-    if (contabotao0 == 100){
-      contabotao0 = 0;
-      incrementahora = LOW;
-    }
-
-
-    if (espera == LOW){
-      if (buttonState0 == LOW & buttonState1 == HIGH){
-        segundos = segundos+3600; 
-        espera = HIGH;
-      }
-    }
-
-    if (espera = HIGH){
-      contabotao1 = contabotao1+1;
-    }
-    if (contabotao1 == 100){
-      contabotao1 = 0;
-      espera = LOW;
-    }
-  }
   
 }
 
 void decodifica_tempo_disp(int dp){
 
   if (dp == 1){
-    if (incrementahora == HIGH){
-      if (cont <= 100){
-      //digitalWrite(d2,HIGH);
-      digitalWrite(d1,HIGH); 
-      }
-    if (cont>100){
-      digitalWrite(d1,LOW);
-    }
-    }
-    if (incrementahora == LOW){
     digitalWrite(d1,HIGH);
     digitalWrite(dot,HIGH);
-    }
-    
-   
     if (h < 10){
       mostra_display(0);
     }
@@ -290,21 +209,7 @@ void decodifica_tempo_disp(int dp){
   }
     
   if (dp == 2){
-
-    if (incrementahora == HIGH){
-      if (cont <= 100){
-      //digitalWrite(d2,HIGH);
-      digitalWrite(d2,HIGH);; 
-      }
-    if (cont>100){
-      digitalWrite(d2,LOW);
-    }
-    }
-    if (incrementahora == LOW){
     digitalWrite(d2,HIGH);
-    }
-    
-    
     if (h < 10){
       mostra_display(h);
     }
@@ -315,20 +220,7 @@ void decodifica_tempo_disp(int dp){
   }
 
   if (dp == 3){
-
-    if (incrementaminuto == HIGH){
-      if (cont <= 100){
-      //digitalWrite(d2,HIGH);
-      digitalWrite(d3,HIGH); 
-      }
-    if (cont>100){
-      digitalWrite(d3,LOW);
-    }
-    }
-    if (incrementaminuto == LOW){
     digitalWrite(d3,HIGH);
-    }
-
     if (m < 10){
       mostra_display(0);
     }
@@ -339,20 +231,7 @@ void decodifica_tempo_disp(int dp){
   }
 
   if (dp == 4){
-
-    if (incrementaminuto == HIGH){
-      if (cont <= 100){
-      //digitalWrite(d2,HIGH);
-      digitalWrite(d4,HIGH); 
-      }
-    if (cont>100){
-      digitalWrite(d4,LOW);
-    }
-    }
-    if (incrementaminuto == LOW){
     digitalWrite(d4,HIGH);
-    }
-
     if (m < 10){
       mostra_display(m);
     }
