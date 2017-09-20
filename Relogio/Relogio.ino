@@ -1,5 +1,5 @@
 #include <TimerOne.h>
-// Teste
+
 
 int a = 2;
 int b = 3;
@@ -20,6 +20,7 @@ int cont = 0;
 int i = 0, j = 0;
 int dia = 0;
 long int h,m,s;
+long int ah=0,am=0;
 long int segundos =  57892;  //Segundo inicial
 
 int hora,minuto,n,hd1,hd2,md1,md2;
@@ -28,25 +29,35 @@ int disp = 1;
 
 const int b0 = A0;            // the number of the pushbutton pin
 const int b1 = A1;            // the number of the pushbutton pin
+const int b2 = A2;            // the number of the pushbutton pin
+const int b3 = A3;            // the number of the pushbutton pin
+const int buzzer = A4;            // the number of the pushbutton pin
+const int b5 = A5;
 
 int buttonState0;              // the current reading from the input pin
 int buttonState1;              // the current reading from the input pin
-
+int buttonState2;              // the current reading from the input pin
 
 unsigned long lastDebounceTime0 = 0;  // the last time the output pin was toggled
 unsigned long lastDebounceTime1 = 0;  // the last time the output pin was toggled
+unsigned long lastDebounceTime2 = 0;  // the last time the output pin was toggled
 unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
 int lastButtonState0 = LOW;   // the previous reading from the input pin
 int lastButtonState1 = LOW;   // the previous reading from the input pin
+int lastButtonState2 = LOW;   // the previous reading from the input pin
 
 int contabotao = 0;
-int contabotao0 = 0,contabotao1 = 0;
+int contabotao0 = 0;
+int contabotao1 = 0;
+int contaalarme = 0;
 
 bool espera = LOW;
 bool incrementaminuto = LOW;
 bool incrementahora = LOW;
 bool menuincrementa = LOW;
-
+bool modoalteracao = LOW;
+bool menualarme = LOW;
+bool alarme = LOW;
 
 void setup() 
 {
@@ -59,6 +70,10 @@ void setup()
 
  pinMode(b0, INPUT);
  pinMode(b1, INPUT);
+ pinMode(b2, INPUT);
+ pinMode(b3, OUTPUT);
+ pinMode(buzzer, OUTPUT);
+ pinMode(b5, OUTPUT);
 
 }
  
@@ -67,6 +82,7 @@ void loop(){
   // read the state of the switch into a local variable:
   int reading0 = digitalRead(b0);
   int reading1 = digitalRead(b1);
+  int reading2 = digitalRead(b2);
 
 
   if (reading0 != lastButtonState0) {
@@ -84,8 +100,6 @@ void loop(){
     }
   }
 
-  
-
   if (reading1 != lastButtonState1) {
     // reset the debouncing timer
     lastDebounceTime1 = millis();
@@ -100,21 +114,27 @@ void loop(){
       buttonState1 = reading1;
     }
   }
+
+ if (reading2 != lastButtonState2) {
+    // reset the debouncing timer
+    lastDebounceTime2 = millis();
+  }
+
+  if ((millis() - lastDebounceTime2) > debounceDelay) {
+    // whatever the reading is at, it's been there for longer than the debounce
+    // delay, so take it as the actual current state:
+
+    // if the button state has changed:
+    if (reading2 != buttonState2) {
+      buttonState2 = reading2;
+    }
+  }
  
   
 // save the reading. Next time through the loop, it'll be the lastButtonState:
  lastButtonState0 = reading0;
  lastButtonState1 = reading1;
-
-
-
-
-
-
-
-
-
-  
+ lastButtonState2 = reading2;
 
   /*
   if(reading0 == HIGH){
@@ -175,8 +195,13 @@ void timerIsr()
       disp = 1;
     }
     
-    decodifica_tempo_disp(disp);
-    disp  = disp+1;
+    if(menualarme == LOW){
+      decodifica_tempo_disp(disp);
+    }
+    else{
+      decodifica_alarme_disp(disp);
+    }
+    disp = disp+1;
 
     botoes();
 
@@ -184,80 +209,143 @@ void timerIsr()
 }
 
 void botoes(){
-
   if (buttonState0 == HIGH & buttonState1 == HIGH){
     contabotao = contabotao+1;
   }
+  if (buttonState2 == HIGH){
+    contaalarme = contaalarme+1;
+  }
+
+  if (contaalarme == 200){
+    alarme = !alarme;
+    digitalWrite(b3, alarme);
+    contaalarme = 0;
+  }
 
   if (contabotao == 200){
-    //segundos = segundos +60;
-    //contabotao = 0;
     incrementaminuto = HIGH;
-    
+    incrementahora = LOW;
+    menuincrementa = HIGH; 
+    menualarme = LOW;
   }
 
-  if (contabotao == 400){
+  if (contabotao >= 400){
     //segundos = segundos +60;
     contabotao = 0;
-    incrementaminuto = LOW;
+    menuincrementa = LOW; 
+    incrementaminuto = HIGH;
     incrementahora = LOW;
-    
+    menualarme = HIGH;
   }
 
-  if (incrementaminuto == HIGH){
-    if(buttonState0 == HIGH & buttonState1 == LOW){
-     contabotao0 = contabotao0+1;
-    }
-    if (contabotao0 == 100){
-      incrementaminuto = LOW;
-      contabotao0 = 0;
-      incrementahora = HIGH;
-    }
-
-    if (espera == LOW){
-      if (buttonState0 == LOW & buttonState1 == HIGH){
-        segundos = segundos+60; 
-        espera = HIGH;
+  if(menuincrementa == HIGH){
+    if (incrementaminuto == HIGH){
+      if(buttonState0 == HIGH & buttonState1 == LOW){
+        contabotao0 = contabotao0+1;
       }
-    }
-
-    if (espera = HIGH){
-      contabotao1 = contabotao1+1;
-    }
-    if (contabotao1 == 100){
-      contabotao1 = 0;
-      espera = LOW;
-    }
-
+      if (contabotao0 >= 100){
+        incrementaminuto = LOW;
+        contabotao0 = 0;
+        incrementahora = HIGH;
+      }
   
-
-    
-  }
-
-  if (incrementahora == HIGH){
-    if(buttonState0 == HIGH & buttonState1 == LOW){
-     contabotao0 = contabotao0+1;
-    }
-    if (contabotao0 == 100){
-      contabotao0 = 0;
-      incrementahora = LOW;
-    }
-
-
-    if (espera == LOW){
-      if (buttonState0 == LOW & buttonState1 == HIGH){
-        segundos = segundos+3600; 
-        espera = HIGH;
+      if(buttonState0 == LOW & buttonState1 == HIGH){
+        contabotao1 = contabotao1+1;
+      }
+      if (contabotao1 >= 100){
+        contabotao = 0;
+        contabotao0 = 0;
+        contabotao1 = 0;
+        segundos = segundos+60 - segundos%60; 
       }
     }
+  
+    if (incrementahora == HIGH){
+      if(buttonState0 == HIGH & buttonState1 == LOW){
+       contabotao0 = contabotao0+1;
+      }
+      if (contabotao0 >= 100){
+        contabotao0 = 0;
+        contabotao = 0;
+        incrementahora = LOW;
+      }
+  
+      if(buttonState0 == LOW & buttonState1 == HIGH){
+       contabotao1 = contabotao1+1;
+      }
+      if (contabotao1 >= 100){
+        contabotao = 0;
+        contabotao0 = 0;
+        contabotao1 = 0;
+        segundos = segundos+3600;
+      }   
+    }
+  }
+  
+  if(menualarme == HIGH){
+    digitalWrite(b5,HIGH);
+    if (incrementaminuto == HIGH){
+      if(buttonState0 == HIGH & buttonState1 == LOW){
+        contabotao0 = contabotao0+1;
+      }
+      if (contabotao0 >= 100){
+        incrementaminuto = LOW;
+        contabotao = 0;
+        contabotao0 = 0;
+        incrementahora = HIGH;
+      }
+  
+      if(buttonState0 == LOW & buttonState1 == HIGH){
+        contabotao1 = contabotao1+1;
+      }
+      if (contabotao1 >= 100){
+        contabotao = 0;
+        contabotao0 = 0;
+        contabotao1 = 0;
+        am = am + 1;
+        if(am>=60){
+          am = 0;
+        }
+      }
+    }
+  
+    if (incrementahora == HIGH){
+      if(buttonState0 == HIGH & buttonState1 == LOW){
+       contabotao0 = contabotao0+1;
+      }
+      if (contabotao0 >= 100){
+        contabotao = 0;
+        contabotao0 = 0;
+        incrementahora = LOW;
+        menualarme = LOW;
+        digitalWrite(A2, LOW);
+      }
+  
+      if(buttonState0 == LOW & buttonState1 == HIGH){
+       contabotao1 = contabotao1+1;
+      }
+      if (contabotao1 >= 100){
+        contabotao = 0;
+        contabotao0 = 0;
+        contabotao1 = 0;
+        ah = ah + 1;
+        if(ah>24){
+          ah = 0;
+        }
+      }   
+    }  
+  }
+  else{
+    digitalWrite(b5,LOW);
+  }
 
-    if (espera = HIGH){
-      contabotao1 = contabotao1+1;
+  if(alarme){
+    if(h==ah    &&    m==am){
+      tone(buzzer, 440);
     }
-    if (contabotao1 == 100){
-      contabotao1 = 0;
-      espera = LOW;
-    }
+  }
+  else{
+    noTone(buzzer);
   }
   
 }
@@ -359,6 +447,106 @@ void decodifica_tempo_disp(int dp){
     }
     if (m >= 10){
       md2 = m % 10;
+      mostra_display(md2);
+    }
+  }
+}
+
+void decodifica_alarme_disp(int dp){
+
+  if (dp == 1){
+    if (incrementahora == HIGH){
+      if (cont <= 100){
+      //digitalWrite(d2,HIGH);
+      digitalWrite(d1,HIGH); 
+      }
+    if (cont>100){
+      digitalWrite(d1,LOW);
+    }
+    }
+    if (incrementahora == LOW){
+    digitalWrite(d1,HIGH);
+    digitalWrite(dot,HIGH);
+    }
+    
+    if (ah < 10){
+      mostra_display(0);
+    }
+  
+    if (ah >= 10){
+      hd1 = ah / 10;
+      mostra_display(hd1);
+    }
+  }
+    
+  if (dp == 2){
+
+    if (incrementahora == HIGH){
+      if (cont <= 100){
+      //digitalWrite(d2,HIGH);
+      digitalWrite(d2,HIGH);; 
+      }
+    if (cont>100){
+      digitalWrite(d2,LOW);
+    }
+    }
+    if (incrementahora == LOW){
+    digitalWrite(d2,HIGH);
+    }
+    
+    if (ah < 10){
+      mostra_display(ah);
+    }
+    if (ah >= 10){
+      hd2 = ah % 10;
+      mostra_display(hd2);
+    }
+  }
+
+  if (dp == 3){
+
+    if (incrementaminuto == HIGH){
+      if (cont <= 100){
+      //digitalWrite(d2,HIGH);
+      digitalWrite(d3,HIGH); 
+      }
+    if (cont>100){
+      digitalWrite(d3,LOW);
+    }
+    }
+    if (incrementaminuto == LOW){
+    digitalWrite(d3,HIGH);
+    }
+
+    if (am < 10){
+      mostra_display(0);
+    }
+    if (am >= 10){
+      md1 = am / 10;
+      mostra_display(md1);
+    }
+  }
+
+  if (dp == 4){
+
+    if (incrementaminuto == HIGH){
+      if (cont <= 100){
+      //digitalWrite(d2,HIGH);
+      digitalWrite(d4,HIGH); 
+      }
+    if (cont>100){
+      digitalWrite(d4,LOW);
+    }
+    }
+    if (incrementaminuto == LOW){
+    digitalWrite(d4,HIGH);
+    }
+
+    if (am < 10){
+      mostra_display(am);
+    }
+    if (am >= 10){
+      md2 = am % 10;
       mostra_display(md2);
     }
   }
