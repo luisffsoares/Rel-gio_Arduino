@@ -1,5 +1,23 @@
-#include <TimerOne.h>
+/*  UNIVERSIDADE ESTADUAL DE MARINGÁ
+ *  Projetos de sistemas microcontrolados 
+ *  Professor Rubens Zenko
+ *  
+ *  Relógio digital utilizando Arduino UNO e display SMA420561KX-2
+ *  
+ *  Autores:
+ *  Luís Felipe Favaro Soares  91695
+ *  Renan Alves Casarotto      88348
+ *  Rodrigo Kenji Imafuku      88874
+ *  
+ *  Setembro de 2017
+ *  
+ */
 
+#include <TimerOne.h> //Biblioteca utilizada
+
+//Declarração de variáveis
+
+//Portas digitais relacionadas com os segmentos do display
 int a = 2;
 int b = 3;
 int c = 4;
@@ -9,11 +27,13 @@ int f = 7;
 int g = 8;
 int dot = 9;
 
+//Portas digitais relacionadas com os Digitos do display
 int d1 = 10;
 int d2 = 11;
 int d3 = 12;
 int d4 = 13;
 
+//Variaveis de contagem de tempo e operações
 int cont = 0;
 int i = 0, j = 0;
 int dia = 0;
@@ -25,30 +45,37 @@ int hora,minuto,n,hd1,hd2,md1,md2;
 
 int disp = 1;
 
-const int b0 = A0;            // the number of the pushbutton pin
-const int b1 = A1;            // the number of the pushbutton pin
-const int b2 = A2;            // the number of the pushbutton pin
-const int b3 = A3;            // the number of the pushbutton pin
-const int buzzer = A4;            // the number of the pushbutton pin
+// Botões
+const int b0 = A0;            
+const int b1 = A1;            
+const int b2 = A2;           
+const int b3 = A3;            
+const int buzzer = A4; //Buzzer conectado na porta Analógica 4          
 const int b5 = A5;
 
-int buttonState0;              // the current reading from the input pin
-int buttonState1;              // the current reading from the input pin
-int buttonState2;              // the current reading from the input pin
+// Leitura dos pinos de entrada
+int buttonState0;              
+int buttonState1;              
+int buttonState2;              
 
-unsigned long lastDebounceTime0 = 0;  // the last time the output pin was toggled
-unsigned long lastDebounceTime1 = 0;  // the last time the output pin was toggled
-unsigned long lastDebounceTime2 = 0;  // the last time the output pin was toggled
-unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
-int lastButtonState0 = LOW;   // the previous reading from the input pin
-int lastButtonState1 = LOW;   // the previous reading from the input pin
-int lastButtonState2 = LOW;   // the previous reading from the input pin
+//Debounce
+unsigned long lastDebounceTime0 = 0;  
+unsigned long lastDebounceTime1 = 0;  
+unsigned long lastDebounceTime2 = 0;  
+unsigned long debounceDelay = 50;
 
+//Leituras antesriores dos botões    
+int lastButtonState0 = LOW;   
+int lastButtonState1 = LOW;   
+int lastButtonState2 = LOW;   
+
+//Variáveis de operação dos botões
 int contabotao = 0;
 int contabotao0 = 0;
 int contabotao1 = 0;
 int contaalarme = 0;
 
+//Variávei de opração dos menus
 bool espera = LOW;
 bool incrementaminuto = LOW;
 bool incrementahora = LOW;
@@ -59,13 +86,14 @@ bool alarme = LOW;
 
 void setup() 
 {
-  inicializa_display();
+  inicializa_display(); //Declara os pinos utilizados do display como saída
   
-  // set a timer of length 5000 microseconds 
+  // Set do timer em 5000 microsegundos 
   Timer1.initialize(5000); 
-  // attach the service routine here
+  // Rotina de interrupção
   Timer1.attachInterrupt( timerIsr ); 
 
+//Setup como entradas e saídas dos botões, buzzer e LEDs
  pinMode(b0, INPUT);
  pinMode(b1, INPUT);
  pinMode(b2, INPUT);
@@ -77,37 +105,31 @@ void setup()
  
 void loop(){
   
-  // read the state of the switch into a local variable:
+  // leitura do estado dos botões
   int reading0 = digitalRead(b0);
   int reading1 = digitalRead(b1);
   int reading2 = digitalRead(b2);
 
 
   if (reading0 != lastButtonState0) {
-    // reset the debouncing timer
+    // reseta do tempo de debounce
     lastDebounceTime0 = millis();
   }
 
   if ((millis() - lastDebounceTime0) > debounceDelay) {
-    // whatever the reading is at, it's been there for longer than the debounce
-    // delay, so take it as the actual current state:
-
-    // if the button state has changed:
+    
     if (reading0 != buttonState0) {
       buttonState0 = reading0;
     }
   }
 
   if (reading1 != lastButtonState1) {
-    // reset the debouncing timer
+    
     lastDebounceTime1 = millis();
   }
 
   if ((millis() - lastDebounceTime1) > debounceDelay) {
-    // whatever the reading is at, it's been there for longer than the debounce
-    // delay, so take it as the actual current state:
-
-    // if the button state has changed:
+    
     if (reading1 != buttonState1) {
       buttonState1 = reading1;
     }
@@ -119,23 +141,20 @@ void loop(){
   }
 
   if ((millis() - lastDebounceTime2) > debounceDelay) {
-    // whatever the reading is at, it's been there for longer than the debounce
-    // delay, so take it as the actual current state:
-
-    // if the button state has changed:
+    
     if (reading2 != buttonState2) {
       buttonState2 = reading2;
     }
   }
   
-// save the reading. Next time through the loop, it'll be the lastButtonState:
+
  lastButtonState0 = reading0;
  lastButtonState1 = reading1;
  lastButtonState2 = reading2;
 }
  
 /// --------------------------
-/// Custom ISR Timer Routine
+/// Rotina do timer
 /// --------------------------
 void timerIsr()
 {   
@@ -150,7 +169,7 @@ void timerIsr()
     }
 
     if (cont <= 100){
-      //digitalWrite(d2,HIGH);
+      
       digitalWrite(dot,LOW); 
     }else{
       digitalWrite(dot,HIGH);
@@ -335,7 +354,6 @@ void decodifica_tempo_disp(int dp){
   if (dp == 1){
     if (incrementahora == HIGH){
       if (cont <= 100){
-      //digitalWrite(d2,HIGH);
       digitalWrite(d1,HIGH); 
       }
     if (cont>100){
@@ -362,7 +380,6 @@ void decodifica_tempo_disp(int dp){
 
     if (incrementahora == HIGH){
       if (cont <= 100){
-      //digitalWrite(d2,HIGH);
       digitalWrite(d2,HIGH);; 
       }
     if (cont>100){
@@ -437,7 +454,7 @@ void decodifica_alarme_disp(int dp){
   if (dp == 1){
     if (incrementahora == HIGH){
       if (cont <= 100){
-      //digitalWrite(d2,HIGH);
+      
       digitalWrite(d1,HIGH); 
       }
     if (cont>100){
@@ -487,7 +504,7 @@ void decodifica_alarme_disp(int dp){
 
     if (incrementaminuto == HIGH){
       if (cont <= 100){
-      //digitalWrite(d2,HIGH);
+      
       digitalWrite(d3,HIGH); 
       }
     if (cont>100){
