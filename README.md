@@ -8,7 +8,7 @@ UNIVERSIDADE ESTADUAL DE MARINGÁ
    
    Relógio digital utilizando Arduino UNO e display SMA420561KX-2
  
-    Autores: Luís Felipe Favaro Soares 9169, Renan Alves Casarotto 88348, Rodrigo Kenji Imafuku 88874
+    Autores: Luís Felipe Favaro Soares 91695, Renan Alves Casarotto 88348, Rodrigo Kenji Imafuku 88874
    
 
    
