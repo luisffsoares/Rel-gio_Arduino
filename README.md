@@ -1,11 +1,11 @@
 # Relógio_Arduino
 
 UNIVERSIDADE ESTADUAL DE MARINGÁ
- *  Projetos de sistemas microcontrolados 
- *  Professor Rubens Zenko
- *  
- *  Relógio digital utilizando Arduino UNO e display SMA420561KX-2
- *  
+   Projetos de sistemas microcontrolados 
+   Professor Rubens Zenko
+   
+   Relógio digital utilizando Arduino UNO e display SMA420561KX-2
+ 
  *  Autores:
  *  Luís Felipe Favaro Soares  91695
  *  Renan Alves Casarotto      88348
