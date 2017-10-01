@@ -9,6 +9,8 @@
  *  Renan Alves Casarotto      88348
  *  Rodrigo Kenji Imafuku      88874
  *  
+ *  
+ *  Mais Informações em: https://github.com/luisffsoares/Rel-gio_Arduino
  *  Setembro de 2017
  *  
  */
